@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center"> 
 <img src="static/images/logo_black_white.svg" width="300" alt="Attendee Logo">
 </div>
 <h2 align="center">Meeting bots made easy</h2>
