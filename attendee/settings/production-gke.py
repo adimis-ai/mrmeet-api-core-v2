@@ -7,12 +7,24 @@ from .base import *
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
+def _bool_env(name: str, default: bool) -> bool:
+    val = os.getenv(name)
+    if val is None:
+        return default
+    return val.strip().lower() in {"1", "true", "yes", "on"}
+
+_db_url = os.getenv("DATABASE_URL", "")
+_internal_hosts = {"mrmeet-postgres", "postgres", "localhost", "127.0.0.1"}
+_looks_internal = any(f"@{h}:" in _db_url or _db_url.startswith(f"postgres://{h}:") for h in _internal_hosts)
+_default_ssl_require = not _looks_internal
+_ssl_require = _bool_env("DB_SSL_REQUIRE", _default_ssl_require)
+
 DATABASES = {
     "default": dj_database_url.config(
         env="DATABASE_URL",
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True,
+        ssl_require=_ssl_require,
     ),
 }
 
