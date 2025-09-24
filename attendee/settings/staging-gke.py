@@ -2,16 +2,18 @@ import os
 
 import dj_database_url
 
-from .base import *
+from .base import *  # noqa: F401,F403
 
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
+
 
 def _bool_env(name: str, default: bool) -> bool:
     val = os.getenv(name)
     if val is None:
         return default
     return val.strip().lower() in {"1", "true", "yes", "on"}
+
 
 _db_url = os.getenv("DATABASE_URL", "")
 _internal_hosts = {"mrmeet-postgres", "postgres", "localhost", "127.0.0.1"}
@@ -25,7 +27,7 @@ DATABASES = {
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=_ssl_require,
-    ),
+    )
 }
 
 # PRESERVE CELERY TASKS IF WORKER IS SHUT DOWN
@@ -59,20 +61,7 @@ CSRF_TRUSTED_ORIGINS = ["https://*.attendee.dev"]
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    },
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {"django": {"handlers": ["console"], "level": "INFO", "propagate": False}},
 }
