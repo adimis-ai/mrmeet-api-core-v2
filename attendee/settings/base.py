@@ -63,12 +63,22 @@ else:
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# Email verification / registration behaviour
+# Allow turning off email verification (immediate registration & login) via
+# the DISABLE_EMAIL_VERIFICATION environment variable.
+if os.getenv("DISABLE_EMAIL_VERIFICATION", "false").lower() in ("1", "true", "yes"):
+    ACCOUNT_EMAIL_VERIFICATION = "none"
+    # No confirmation step on GET; accounts are active immediately and can login.
+    ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+    ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+else:
+    ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+    ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+    ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
 ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "/"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_QUERY_EMAIL = True

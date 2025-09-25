@@ -37,7 +37,10 @@ def _bool_env(name: str, default: bool) -> bool:
 
 _db_url = os.getenv("DATABASE_URL", "")
 _internal_hosts = {"mrmeet-postgres", "postgres", "localhost", "127.0.0.1"}
-_looks_internal = any(f"@{h}:" in _db_url or _db_url.startswith(f"postgres://{h}:") for h in _internal_hosts)
+_looks_internal = any(
+    f"@{h}:" in _db_url or _db_url.startswith(f"postgres://{h}:")
+    for h in _internal_hosts
+)
 
 # Default rule: require SSL unless looks internal.
 _default_ssl_require = not _looks_internal
@@ -63,25 +66,26 @@ SECURE_HSTS_SECONDS = 60
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = "smtp.mailgun.org"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "noreply@mail.attendee.dev"
+if os.getenv("DISABLE_EMAIL_VERIFICATION", "false").lower() in ("1", "true", "yes"):
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_HOST = "smtp.mailgun.org"
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = "noreply@mail.attendee.dev"
 
-ADMINS = []
+    ADMINS = []
 
-if os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"):
-    ADMINS.append(
-        (
-            "Attendee Error Reports Email Receiver",
-            os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"),
+    if os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"):
+        ADMINS.append(
+            (
+                "Attendee Error Reports Email Receiver",
+                os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"),
+            )
         )
-    )
 
-SERVER_EMAIL = "noreply@mail.attendee.dev"
+    SERVER_EMAIL = "noreply@mail.attendee.dev"
 
 LOGGING = {
     "version": 1,
