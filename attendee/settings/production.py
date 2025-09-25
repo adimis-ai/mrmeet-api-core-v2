@@ -37,10 +37,7 @@ def _bool_env(name: str, default: bool) -> bool:
 
 _db_url = os.getenv("DATABASE_URL", "")
 _internal_hosts = {"mrmeet-postgres", "postgres", "localhost", "127.0.0.1"}
-_looks_internal = any(
-    f"@{h}:" in _db_url or _db_url.startswith(f"postgres://{h}:")
-    for h in _internal_hosts
-)
+_looks_internal = any(f"@{h}:" in _db_url or _db_url.startswith(f"postgres://{h}:") for h in _internal_hosts)
 
 # Default rule: require SSL unless looks internal.
 _default_ssl_require = not _looks_internal
