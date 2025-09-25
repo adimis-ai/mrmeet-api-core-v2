@@ -108,6 +108,12 @@ COPY --chown=app:app . .
 # Make STATIC_ROOT writeable for the non-root user so collectstatic can run at startup
 RUN mkdir -p "$cwd/staticfiles" && chown -R app:app "$cwd/staticfiles"
 
+# Ensure Celery beat schedule directory exists and is owned by the non-root user.
+# When using a named volume (e.g. celerybeat_data:/var/lib/celery) Docker will, on first
+# create, populate it from the image path preserving ownership; creating it here with the
+# right ownership avoids runtime permission denied errors for beat-schedule.db.
+RUN mkdir -p /var/lib/celery && chown app:app /var/lib/celery
+
 # Switch to non-root AFTER copies to avoid permission flakiness
 USER app
 
