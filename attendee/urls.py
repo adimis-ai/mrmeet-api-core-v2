@@ -49,6 +49,7 @@ urlpatterns += [
     path("projects/", include("bots.projects_urls", namespace="projects")),
     path("api/v1/", include("bots.calendars_api_urls")),
     path("api/v1/", include("bots.bots_api_urls")),
+    path("api/v1/", include("api.urls")),
 ]
 
 if settings.DEBUG:
